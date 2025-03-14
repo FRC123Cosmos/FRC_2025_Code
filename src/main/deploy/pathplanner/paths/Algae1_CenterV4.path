@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.63,
-        "y": 1.27
+        "x": 7.185641025641026,
+        "y": 4.190128205128206
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.132834018703424,
-        "y": 2.1433256230631192
+        "x": 6.156403427149285,
+        "y": 4.073899201420719
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.276346153846154,
-        "y": 2.9929487179487175
+        "x": 5.761410256410255,
+        "y": 4.025
       },
       "prevControl": {
-        "x": 5.719094388393861,
-        "y": 2.740483286914315
+        "x": 6.713244272633901,
+        "y": 4.142448409698447
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,26 +29,12 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.908992805755392,
-      "maxWaypointRelativePos": 1.0,
-      "constraints": {
-        "maxVelocity": 2.0,
-        "maxAcceleration": 1.5,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "elevatorDownL1",
-      "waypointRelativePos": 0.47733812949640536,
+      "name": "ejectAlgae",
+      "waypointRelativePos": 0.09745293466223322,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -63,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 121.42956561483845
+    "rotation": 179.19307054489755
   },
   "reversed": false,
-  "folder": "Right",
+  "folder": "Center",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 134.28327625718848
+    "rotation": 179.4743653935424
   },
   "useDefaultConstraints": true
 }

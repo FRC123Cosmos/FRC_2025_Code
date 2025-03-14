@@ -52,7 +52,7 @@ public final class Constants {
         public static final double kBackLeftOffset = Math.PI;
         public static final double kBackRightOffset = (Math.PI / 2);
 
-        public static final double kMaxSpeedMetersPerSec = 4.0; // max speed in mps
+        public static final double kMaxSpeedMetersPerSec = 3.5; // max speed in mps
         public static final double kMaxAngSpeedRadiansPerSec = 2 * Math.PI; // max turning speed in rps
     }
 
@@ -189,8 +189,8 @@ public final class Constants {
         public static final double kElevatorHeightDeadbandInches = 0.35;
 
         public static final double kElevatorPosition_L0 = 1.25;
-        public static final double kElevatorPosition_L1 = 9;
-        public static final double kElevatorPosition_L2 = 24;
+        public static final double kElevatorPosition_L1 = 6;
+        public static final double kElevatorPosition_L2 = 22.5;
         public static final double kElevatorPosition_L3 = 47.5;
     }
 

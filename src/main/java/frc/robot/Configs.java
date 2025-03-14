@@ -200,9 +200,9 @@ public final class Configs {
                         .voltageCompensation(12);
                 winchMaxConfig.softLimit
                         .forwardSoftLimit(WinchConstants.kTopPosition)
-                        .forwardSoftLimitEnabled(true)
-                        .reverseSoftLimit(0)
-                        .reverseSoftLimitEnabled(true);
+                        .forwardSoftLimitEnabled(true);
+                        // .reverseSoftLimit(0)
+                        // .reverseSoftLimitEnabled(true);
                 winchMaxConfig.closedLoop
                         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                         .pid(0.05, 2e-5, 0.0)

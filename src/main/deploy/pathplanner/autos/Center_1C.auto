@@ -11,28 +11,27 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "wait",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "notHaveCoral"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "pulseCoral"
-                }
-              }
-            ]
+            "waitTime": 2.7
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "pulseCoral"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "BackUp"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Algae1_CenterV4"
           }
         }
       ]
