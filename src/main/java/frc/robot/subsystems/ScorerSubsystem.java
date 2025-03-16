@@ -169,11 +169,11 @@ public class ScorerSubsystem extends SubsystemBase{
 
     public void ejectBottomRight(){
         scorerRightController.setReference(0.05, ControlType.kDutyCycle);
-        scorerLeftController.setReference(0.3, ControlType.kDutyCycle);
+        scorerLeftController.setReference(0.15, ControlType.kDutyCycle);
     }
 
     public void ejectBottomLeft(){
-        scorerRightController.setReference(0.3, ControlType.kDutyCycle);
+        scorerRightController.setReference(0.15,ControlType.kDutyCycle);
         scorerLeftController.setReference(0.05, ControlType.kDutyCycle);
     }
 

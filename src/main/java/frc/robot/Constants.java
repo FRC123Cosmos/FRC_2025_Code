@@ -189,9 +189,12 @@ public final class Constants {
         public static final double kElevatorHeightDeadbandInches = 0.35;
 
         public static final double kElevatorPosition_L0 = 1.25;
-        public static final double kElevatorPosition_L1 = 6;
-        public static final double kElevatorPosition_L2 = 22.5;
+        public static final double kElevatorPosition_L1 = 8.75;
+        public static final double kElevatorPosition_L2 = 23;
         public static final double kElevatorPosition_L3 = 47.5;
+
+        public static final double kElevatorPosition_L1Algae = 26;
+        public static final double kElevatorPosition_L2Algae = 39;
     }
 
     public static final class ArmConstants{
@@ -213,7 +216,7 @@ public final class Constants {
         public static final double kArmReverseSoftLimit = 14;
 
         public static final double kFullExtendPosition = 90;
-        public static final double kStowPosition = 20;
+        public static final double kStowPosition = 23;
         public static final double kPartialPosition = 30;
     }
 

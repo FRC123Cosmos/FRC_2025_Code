@@ -33,16 +33,16 @@ public class CoralIntakeCommand extends Command {
         SmartDashboard.putNumber("State Counter", counter);
         switch (counter) {
             case 0:
-            scorer.setScorerMaxLeft(.28);
-            scorer.setScorerMaxRight(.28);
+            scorer.setScorerMaxLeft(.25);
+            scorer.setScorerMaxRight(.25);
                 if (scorer.initProx) {
                     LedSubsystem.setYellowMsg();
                     counter=1;
                 }
                 break;
             case 1:
-                scorer.setScorerMaxLeft(.2);
-                scorer.setScorerMaxRight(.2);
+                scorer.setScorerMaxLeft(.225);
+                scorer.setScorerMaxRight(.225);
                 if ((scorer.endProx) && !(scorer.initProx)) {
                     counter = 2;
                 }

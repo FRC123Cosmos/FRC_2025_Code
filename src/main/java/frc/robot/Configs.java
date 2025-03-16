@@ -82,10 +82,10 @@ public final class Configs {
                         .maxAcceleration(ElevatorConstants.kMaxAcceleration);
                 leadElevatorMaxConfig.closedLoop
                         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                        .pid(0.145, 2e-5, 0)
-                        .iZone(0.2)
+                        .pid(0.12, 2e-5, 0)
+                        .iZone(0.1)
                         .velocityFF(0.0)
-                        .outputRange(-0.2, 0.2);
+                        .outputRange(-0.3, 0.3);
                 leadElevatorMaxConfig.softLimit
                         .forwardSoftLimit(47.5)
                         .forwardSoftLimitEnabled(true)

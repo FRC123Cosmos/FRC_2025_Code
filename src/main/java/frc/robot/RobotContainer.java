@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -107,6 +106,12 @@ public class RobotContainer {
       new InstantCommand(() -> arm.setArmPosition(15), arm).andThen(() -> arm.setArmRoller(.3))
     );
 
+    new EventTrigger("elevatorUpL1Algae + ArmDown").onTrue(new ParallelCommandGroup(
+      new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L1Algae), elevator),
+      new InstantCommand(() -> arm.setArmPosition(22), arm).andThen(
+      new InstantCommand(() -> arm.setArmRoller(-0.4), arm))
+    ));
+
     new EventTrigger("elevatorUpL3").onTrue(
       new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L3))
     );
@@ -122,13 +127,16 @@ public class RobotContainer {
     NamedCommands.registerCommand("ejectLeft", new RunCommand(() -> scorer.ejectBottomLeft(), scorer));
     NamedCommands.registerCommand("ejectRight", new RunCommand(() -> scorer.ejectBottomRight(), scorer));
 
-    NamedCommands.registerCommand("ejectAlgae", new InstantCommand(() -> arm.setArmRoller(-.4), arm));
+    NamedCommands.registerCommand("ejectAlgae", new RunCommand(() -> arm.setArmRoller(-.4), arm));
 
-    NamedCommands.registerCommand("ejectCoral", new WaitUntilCommand(elevator::atHeight).andThen(new InstantCommand(() -> scorer.ejectElevated(), scorer))
-      .andThen(new WaitUntilCommand(scorer::notHasCoral)).andThen(new InstantCommand(() -> scorer.stop(), scorer)));
+    NamedCommands.registerCommand("ejectCoral", new RunCommand(() -> scorer.ejectElevated(), scorer));
     
     new EventTrigger("elevatorDownL0").onTrue(new InstantCommand(
       () -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L0), elevator));
+
+    new EventTrigger("elevatorDownL0+armOut").onTrue(
+      new ParallelCommandGroup(new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L0), elevator),
+      new InstantCommand(() -> arm.setArmPosition(90), arm).andThen(new InstantCommand(() -> arm.setArmRoller(-.4), arm))));
 
     new EventTrigger("elevatorUpL2+armOut").onTrue(
       new ParallelCommandGroup(new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L2), elevator),
@@ -141,10 +149,10 @@ public class RobotContainer {
     // NamedCommands.registerCommand("ejectAlgae", new InstantCommand(() -> arm.setArmRoller(.3), arm).
     //   andThen(new WaitCommand(1)).andThen(new InstantCommand(() -> arm.setArmRoller(0), arm)));
 
-    new EventTrigger("ejectAlgae").onTrue(new InstantCommand(() -> arm.setArmRoller(-.4), arm));
+    new EventTrigger("ejectAlgae").onTrue(new RunCommand(() -> arm.setArmRoller(.3), arm));
 
     new EventTrigger("elevatorUpL2Algae+armDown").onTrue(
-      new ParallelCommandGroup(new InstantCommand(() -> elevator.setPosition(28), elevator), 
+      new ParallelCommandGroup(new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L2Algae), elevator), 
       new InstantCommand(() -> arm.setArmPosition(ArmConstants.kStowPosition)).andThen(new InstantCommand(() -> arm.setArmRoller(-.4), arm))
     ));
 
@@ -182,7 +190,7 @@ public class RobotContainer {
     autoPosition.addOption("Left", AutoPos.Left);
     autoPosition.addOption("Center", AutoPos.Center);
     autoPosition.addOption("Right", AutoPos.Right);
-    autoPosition.setDefaultOption("Left", AutoPos.Center);
+    autoPosition.setDefaultOption("Center", AutoPos.Center);
     SmartDashboard.putData("Auto Pos", autoPosition);
 
 
@@ -218,11 +226,12 @@ public class RobotContainer {
     // coPilotControllerCommand.x().onTrue(new InstantCommand(() -> arm.decremPos(), arm));
     // coPilotControllerCommand.a().whileTrue(new InstantCommand(() -> elevator.decremPos(), elevator));
 
-    coPilotControllerCommand.y().onTrue(new InstantCommand(() -> arm.setArmPosition(90), arm));
-    coPilotControllerCommand.b().whileTrue(new StartEndCommand(() -> arm.setArmRoller(0.3), () -> arm.setArmRoller(0)));
+    coPilotControllerCommand.b().onTrue(new InstantCommand(() -> arm.setArmPosition(90), arm));
+    coPilotControllerCommand.y().whileTrue(new StartEndCommand(() -> arm.setArmRoller(0.3), () -> arm.setArmRoller(0)));
     coPilotControllerCommand.x().whileTrue(new StartEndCommand(() -> arm.setArmRoller(-0.40), () -> arm.setArmRoller(0)));
-    coPilotControllerCommand.a().onTrue(new InstantCommand(() -> arm.setArmPosition(15), arm));
+    coPilotControllerCommand.a().onTrue(new InstantCommand(() -> arm.setArmPosition(18), arm));
     coPilotControllerCommand.start().onTrue(new InstantCommand(() -> arm.setArmPosition(190), arm));
+    coPilotControllerCommand.back().whileTrue(new StartEndCommand(() -> arm.setArmRoller(-0.40), () -> arm.setArmRoller(0)));
 
 
     new JoystickButton(copilotController, Button.kLeftBumper.value).whileTrue(new StartEndCommand(() -> scorer.ejectBottomLeft(), 
@@ -259,6 +268,14 @@ public class RobotContainer {
     coPilotSecondControllerCommand.button(1).onTrue(new InstantCommand(() -> arm.incremPos(), arm));
     coPilotSecondControllerCommand.button(3).onTrue(new InstantCommand(() -> arm.decremPos(), arm));
 
+    coPilotSecondControllerCommand.button(2).onTrue(new ParallelCommandGroup(
+      new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L1Algae)), 
+      new InstantCommand(() -> arm.setArmPosition(25), arm)));
+    coPilotSecondControllerCommand.button(4).onTrue(new ParallelCommandGroup(
+      new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L2Algae)), 
+      new InstantCommand(() -> arm.setArmPosition(25), arm)));
+
+    
     // new Trigger(this::R1Left).whileTrue(new StartEndCommand(() -> arm.setArmRoller(-0.40), () -> arm.setArmRoller(0)));
     // new Trigger(this::R1Right).whileTrue(new StartEndCommand(() -> arm.setArmRoller(0.3), () -> arm.setArmRoller(0)));
 
@@ -272,9 +289,8 @@ public class RobotContainer {
     coPilotControllerCommand.povUp().onTrue(new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L3), elevator));
     coPilotControllerCommand.povDown().onTrue(new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L0), elevator));
     coPilotControllerCommand.povRight().onTrue(new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L1), elevator));
-    coPilotControllerCommand.povLeft().onTrue(new ParallelCommandGroup(
-      new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L2), elevator),
-      new InstantCommand(() -> arm.setArmPosition(170), arm)));
+    coPilotControllerCommand.povLeft().onTrue(
+      new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L2), elevator));
   }
 
   private boolean leftTrigger() {

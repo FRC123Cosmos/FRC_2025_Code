@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "MoveForwardPath"
+            "pathName": "MoveForwardPathV5"
           }
         },
         {
@@ -17,13 +17,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ejectLeft"
+                  "name": "pulseCoral"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.2
+                  "waitTime": 2.0
                 }
               }
             ]
@@ -32,13 +32,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Algae1_CenterV6"
+            "pathName": "BackUp"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Algae1_CenterV4"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.5
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Algae1_CenterV6"
           }
         }
       ]

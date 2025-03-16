@@ -25,13 +25,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BackUp"
+            "pathName": "BackUpV2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Algae1_CenterV4"
+            "pathName": "Algae1_CenterV5"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Algae2_CenterV4"
           }
         }
       ]
