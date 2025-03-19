@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -49,6 +50,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LedSubsystem;
 // import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.ScorerSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WinchSubsystem;
 // import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -66,6 +68,7 @@ public class RobotContainer {
   private final WinchSubsystem winch = new WinchSubsystem();
   private final ScorerSubsystem scorer = new ScorerSubsystem();
   private final ArmSubsystem arm = new ArmSubsystem();
+  private final VisionSubsystem vision = new VisionSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverControllerCommand =
@@ -83,7 +86,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
+    CommandScheduler.getInstance().registerSubsystem(vision);
     /*---------------------------------------------Only For Center Auton----------------------------------------------- */
 
     new EventTrigger("elevatorUpL1").onTrue(
@@ -121,7 +124,7 @@ public class RobotContainer {
       new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L2))
     );
 
-    new EventTrigger("shootAlgae").onTrue(new InstantCommand(() -> arm.setArmRoller(-.4), arm));
+    new EventTrigger("shootAlgae").onTrue(new InstantCommand(() -> arm.setArmRoller(.3), arm));
 
     NamedCommands.registerCommand("waitTillHeight", new WaitUntilCommand(elevator::atHeight));
     NamedCommands.registerCommand("ejectLeft", new RunCommand(() -> scorer.ejectBottomLeft(), scorer));
@@ -149,7 +152,7 @@ public class RobotContainer {
     // NamedCommands.registerCommand("ejectAlgae", new InstantCommand(() -> arm.setArmRoller(.3), arm).
     //   andThen(new WaitCommand(1)).andThen(new InstantCommand(() -> arm.setArmRoller(0), arm)));
 
-    new EventTrigger("ejectAlgae").onTrue(new RunCommand(() -> arm.setArmRoller(.3), arm));
+    new EventTrigger("ejectAlgae").onTrue(new RunCommand(() -> arm.setArmRoller(-.4), arm));
 
     new EventTrigger("elevatorUpL2Algae+armDown").onTrue(
       new ParallelCommandGroup(new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L2Algae), elevator), 
@@ -230,7 +233,7 @@ public class RobotContainer {
     coPilotControllerCommand.y().whileTrue(new StartEndCommand(() -> arm.setArmRoller(0.3), () -> arm.setArmRoller(0)));
     coPilotControllerCommand.x().whileTrue(new StartEndCommand(() -> arm.setArmRoller(-0.40), () -> arm.setArmRoller(0)));
     coPilotControllerCommand.a().onTrue(new InstantCommand(() -> arm.setArmPosition(18), arm));
-    coPilotControllerCommand.start().onTrue(new InstantCommand(() -> arm.setArmPosition(190), arm));
+    coPilotControllerCommand.start().onTrue(new InstantCommand(() -> arm.setArmPosition(180), arm));
     coPilotControllerCommand.back().whileTrue(new StartEndCommand(() -> arm.setArmRoller(-0.40), () -> arm.setArmRoller(0)));
 
 

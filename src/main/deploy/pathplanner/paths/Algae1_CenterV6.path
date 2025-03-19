@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 4.946089743589743,
-        "y": 2.9413461538461534
+        "x": 4.956410256410256,
+        "y": 2.9103846153846153
       },
       "prevControl": {
-        "x": 5.333014277389276,
-        "y": 2.53885453088578
+        "x": 5.343334790209789,
+        "y": 2.507892992424242
       },
       "nextControl": null,
       "isLocked": false,
@@ -76,7 +76,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "ejectAlgae",
+      "name": "keepOutAlgae",
       "waypointRelativePos": 0.04872646733111498,
       "endWaypointRelativePos": null,
       "command": null

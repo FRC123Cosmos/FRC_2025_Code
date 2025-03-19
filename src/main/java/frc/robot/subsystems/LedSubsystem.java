@@ -174,6 +174,7 @@ public class LedSubsystem extends SubsystemBase {
             private static AddressableLEDBuffer led_blank;
             private static AddressableLEDBuffer led_green;
             private static AddressableLEDBuffer led_yellow;
+            private static AddressableLEDBuffer led_orange;
             // private static AddressableLEDBuffer led_dynamic_msg;
             private static AddressableLEDBuffer rainbow_buffer;
             private static AddressableLEDBuffer elevator_progress_buffer;
@@ -225,6 +226,7 @@ public class LedSubsystem extends SubsystemBase {
                 checkerBoard_buffer = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
                 counterChase_buffer = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
                 cosmic_buffer = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
+                led_orange = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
                 // led_dynamic_msg = new AddressableLEDBuffer(LEDConstants.ledBufferLength); // specific blinking message
         
                 // initial message for led buffers
@@ -234,6 +236,7 @@ public class LedSubsystem extends SubsystemBase {
                     led_blue_alliance.setLED(i, Color.kBlue);
                     led_green.setLED(i, Color.kGreen);
                     led_yellow.setLED(i, Color.kYellow);
+                    led_orange.setLED(i, Color.kOrange);
         
                     // using bitwise-AND operators .... (alternating red-blue led)
                     if (((i & 3) == 0) // if the last two binary value of i & 3 is the same as 0's
@@ -278,6 +281,10 @@ public class LedSubsystem extends SubsystemBase {
             public static void setYellowMsg(){
                 // dynamicEffect = false;
                 ledBar.setData(led_yellow); // lights up green
+            }
+
+            public static void setOrangeMsg(){
+                ledBar.setData(led_orange);
             }
         
             public static void setAllianceColor(){ // sets allaince color in led
@@ -364,16 +371,16 @@ public class LedSubsystem extends SubsystemBase {
                     if (policeIsFirstPhase) {
                         // First phase: First half red, second half blue
                         if (i < HALF_LENGTH) {
-                            policeLed_buffer.setLED(i, Color.kRed);
-                        } else {
                             policeLed_buffer.setLED(i, Color.kBlue);
+                        } else {
+                            policeLed_buffer.setLED(i, Color.kRed);
                         }
                     } else {
                         // Second phase: First half blue, second half red
                         if (i < HALF_LENGTH) {
-                            policeLed_buffer.setLED(i, Color.kBlue);
-                        } else {
                             policeLed_buffer.setLED(i, Color.kRed);
+                        } else {
+                            policeLed_buffer.setLED(i, Color.kBlue);
                         }
                     }
                 }

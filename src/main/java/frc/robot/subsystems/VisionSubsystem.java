@@ -5,88 +5,82 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 
 public class VisionSubsystem extends SubsystemBase {
-    private final PhotonCamera cameraB;
-    // private final PhotonCamera cameraG;
-    private PhotonPipelineResult latestResultB;
-    // private PhotonPipelineResult latestResultG;
+    private final PhotonCamera camera = new PhotonCamera("GSC_BLACK");
+    private PhotonPipelineResult latestResult = new PhotonPipelineResult();
 
-    private final String cameraNameB;
-    // private final String cameraNameG;
+    private final String cameraName = "GSC_BLACK";
 
     
     // Camera position relative to robot center (in meters)
-    private final Translation2d cameraOffsetB; // x (forward), y (left/right)
-    private final Rotation2d cameraYawOffsetB; // Camera's yaw relative to robot heading
-    private final double cameraHeightB; // z (height) in meters
-    private final double cameraPitchB; // Pitch angle in degrees
+    private final Translation2d cameraOffset;
+    // x (forward), y (left/right)
+    private final Rotation2d cameraYawOffset; // Camera's yaw relative to robot heading
+    private final double cameraHeight; // z (height) in meters
+    private final double cameraPitch; // Pitch angle in degrees
 
-    // private final Translation2d cameraOffsetG; // x (forward), y (left/right)
-    // private final Rotation2d cameraYawOffsetG; // Camera's yaw relative to robot heading
-    // private final double cameraHeightG; // z (height) in meters
-    // private final double cameraPitchG; // Pitch angle in degrees
+        
+    private double rawYaw;
+    private double target_x=0;
+    public static double target_y;
+    private double target_z=0;
 
-    private double rawYawB;
-    // private double rawYawG;
-
-    /**
-     * Constructor with camera position
-     * @param cameraName Name of the camera in PhotonVision
-     * @param cameraXOffset Forward offset from robot center (meters)
-     * @param cameraYOffset Left/right offset from robot center (meters)
-     * @param cameraHeight Height from ground (meters)
-     * @param cameraYawOffset Yaw offset from robot heading (degrees)
-     * @param cameraPitch Pitch angle (degrees)
-     */
     public VisionSubsystem() {
+        CommandScheduler.getInstance().registerSubsystem(this);
+        
+        cameraOffset = new Translation2d(VisionConstants.cameraXOffset, VisionConstants.cameraYOffset);
+        cameraYawOffset = Rotation2d.fromDegrees(VisionConstants.cameraYawOffset);
+        cameraHeight = VisionConstants.cameraHeight;
+        cameraPitch = VisionConstants.cameraPitch;
 
-        cameraNameB = "GSC_BLACK";
-        // cameraNameG = "GSC_GRAY";
-
-        cameraB = new PhotonCamera(cameraNameB);
-        // cameraG = new PhotonCamera(cameraNameG);
-
-        latestResultB = new PhotonPipelineResult();
-        // latestResultG = new PhotonPipelineResult();
-
-        cameraOffsetB = new Translation2d(VisionConstants.cameraXOffsetB, VisionConstants.cameraYOffsetB);
-        cameraYawOffsetB = Rotation2d.fromDegrees(VisionConstants.cameraYawOffsetB);
-        cameraHeightB = VisionConstants.cameraHeightB;
-        cameraPitchB = VisionConstants.cameraPitchB;
-
-        // cameraOffsetG = new Translation2d(VisionConstants.cameraXOffsetG, VisionConstants.cameraYOffsetG);
-        // cameraYawOffsetG = Rotation2d.fromDegrees(VisionConstants.cameraYawOffsetG);
-        // cameraHeightG = VisionConstants.cameraHeightG;
-        // cameraPitchG = VisionConstants.cameraPitchG;
+        target_y = 1;
     }
 
     @Override
     public void periodic() {
-        latestResultB = cameraB.getLatestResult();
+        // query camera
+        latestResult = camera.getLatestResult();
         // latestResultG = cameraG.getLatestResult();
+        boolean hasTarget = latestResult.hasTargets();
+        // avoid null pointer exception if no tracked target
+        // if ( hasTargetB ) {
+            PhotonTrackedTarget target = latestResult.getBestTarget();
+            int targetID = target.getFiducialId();
+            double poseAmbiguity = target.getPoseAmbiguity();
+            Transform3d bestCameraToTargetPose = target.getBestCameraToTarget();
 
-        rawYawB = latestResultB.getBestTarget().getYaw();
-        // rawYawG = latestResultG.getBestTarget().getYaw();
+            rawYaw = target.getYaw();
+            target_x = bestCameraToTargetPose.getX();
+            target_y = bestCameraToTargetPose.getY();
+            target_z = bestCameraToTargetPose.getZ();
+            // mpk - comment out after verifing target values
+            // SmartDashboard.putNumber("targetID",targetID);
+            // SmartDashboard.putNumber("Ambiguity",poseAmbiguity);
+            // SmartDashboard.putNumber("cameraB Yaw", rawYaw);
+            SmartDashboard.putNumber("target_x", target_x);
+            SmartDashboard.putNumber("target_y", target_y);
+            SmartDashboard.putNumber("target_z", target_z);
+        // }
 
-        SmartDashboard.putNumber("cameraB Yaw", rawYawB);
-        // SmartDashboard.putNumber("camraG Yaw", rawYawG);
+        // rawYaw = latestResultB.getBestTarget().getYaw();
+
+        // SmartDashboard.putNumber("camera Yaw", rawYawB);
 
         SmartDashboard.putBoolean("isLeftAligned", isLeftAlignB());
     }
 
 
     public boolean hasTargetB() {
-        return latestResultB.hasTargets();
+        return latestResult.hasTargets();      // mpk - should be periodic result via public gettter/setter interface?
     }
-
-    // public boolean hasTargetG() {
-    //     return latestResultG.hasTargets();
-    // }
 
     /**
      * Get yaw adjusted for camera offset
@@ -95,72 +89,37 @@ public class VisionSubsystem extends SubsystemBase {
      */
     public double getTargetYawAdjustedB(Rotation2d robotHeading) {
         if (hasTargetB()) {
-            double rawYaw = latestResultB.getBestTarget().getYaw();
+            double rawYaw = latestResult.getBestTarget().getYaw();
             // Adjust yaw for camera's orientation and position
-            Rotation2d adjustedYawB = Rotation2d.fromDegrees(rawYaw).plus(cameraYawOffsetB).minus(robotHeading);
+            Rotation2d adjustedYawB = Rotation2d.fromDegrees(rawYaw).plus(cameraYawOffset).minus(robotHeading);
             return adjustedYawB.getDegrees();
         }
         return 0.0;
     }
 
-
-    // public double getTargetYawAdjustedG(Rotation2d robotHeading) {
-    //     if (hasTargetG()) {
-    //         double rawYaw = latestResultG.getBestTarget().getYaw();
-    //         // Adjust yaw for camera's orientation and position
-    //         Rotation2d adjustedYawG = Rotation2d.fromDegrees(rawYaw).plus(cameraYawOffsetG).minus(robotHeading);
-    //         return adjustedYawG.getDegrees();
-    //     }
-    //     return 0.0;
-    // }
-
     public boolean isLeftAlignB(){
         if (hasTargetB()) {
-            return (rawYawB > VisionConstants.leftAlignRangeLeftInterval) && (rawYawB < VisionConstants.leftAlignRangeRightInterval);
+            return (rawYaw > VisionConstants.leftAlignRangeLeftInterval) && (rawYaw < VisionConstants.leftAlignRangeRightInterval);
         }
         else{
             return false;
         }
     }
 
-    // public boolean isLeftAlignG(){
-    //     if (hasTargetG()) {
-    //         return (rawYawG > VisionConstants.leftAlignRangeLeftInterval) && (rawYawG < VisionConstants.leftAlignRangeRightInterval);
-    //     }
-    //     else{
-    //         return false;
-    //     }
-
-    // }
-
-
     public double getTargetPitchB() {
         if (hasTargetB()) {
-            return latestResultB.getBestTarget().getPitch();
+            return latestResult.getBestTarget().getPitch();
         }
         return 0.0;
     }
-
-    // public double getTargetPitchG() {
-    //     if (hasTargetG()) {
-    //         return latestResultG.getBestTarget().getPitch();
-    //     }
-    //     return 0.0;
-    // }
 
     public double getTargetAreaB() {
         if (hasTargetB()) {
-            return latestResultB.getBestTarget().getArea();
+            return latestResult.getBestTarget().getArea();
         }
         return 0.0;
     }
 
-    // public double getTargetAreaG() {
-    //     if (hasTargetG()) {
-    //         return latestResultG.getBestTarget().getArea();
-    //     }
-    //     return 0.0;
-    // }
     /**
      * Estimate distance to target, accounting for camera height and pitch
      * @param targetHeight Height of target from ground (meters)
@@ -169,46 +128,24 @@ public class VisionSubsystem extends SubsystemBase {
     public double getDistanceToTargetB(double targetHeight) {
         if (hasTargetB()) {
             double pitch = getTargetPitchB();
-            double totalPitch = Math.toRadians(cameraPitchB + pitch);
-            return (targetHeight - cameraHeightB) / Math.tan(totalPitch);
+            double totalPitch = Math.toRadians(cameraPitch + pitch);
+            return (targetHeight - cameraHeight) / Math.tan(totalPitch);
         }
         return -1.0;
     }
 
-    // public double getDistanceToTargetG(double targetHeight) {
-    //     if (hasTargetG()) {
-    //         double pitch = getTargetPitchG();
-    //         double totalPitch = Math.toRadians(cameraPitchG + pitch);
-    //         return (targetHeight - cameraHeightG) / Math.tan(totalPitch);
-    //     }
-    //     return -1.0;
-    // }
-
     public PhotonTrackedTarget getBestTargetB() {
         if (hasTargetB()) {
-            return latestResultB.getBestTarget();
+            return latestResult.getBestTarget();
         }
         return null;
     }
 
-    // public PhotonTrackedTarget getBestTargetG() {
-    //     if (hasTargetG()) {
-    //         return latestResultG.getBestTarget();
-    //     }
-    //     return null;
-    // }
-
-    public Translation2d getCameraOffsetB() {
-        return cameraOffsetB;
+    public Translation2d getCameraOffset() {
+        return cameraOffset;
     }
-    // public Translation2d getCameraOffsetG() {
-    //     return cameraOffsetG;
-    // }
 
-    public Rotation2d getCameraYawOffsetB() {
-        return cameraYawOffsetB;
+    public Rotation2d getCameraYawOffset() {
+        return cameraYawOffset;
     }
-    // public Rotation2d getCameraYawOffsetG() {
-    //     return cameraYawOffsetG;
-    // }
 }

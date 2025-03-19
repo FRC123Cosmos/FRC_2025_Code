@@ -36,7 +36,7 @@ public class CoralIntakeCommand extends Command {
             scorer.setScorerMaxLeft(.25);
             scorer.setScorerMaxRight(.25);
                 if (scorer.initProx) {
-                    LedSubsystem.setYellowMsg();
+                    LedSubsystem.setOrangeMsg();
                     counter=1;
                 }
                 break;
@@ -44,6 +44,7 @@ public class CoralIntakeCommand extends Command {
                 scorer.setScorerMaxLeft(.225);
                 scorer.setScorerMaxRight(.225);
                 if ((scorer.endProx) && !(scorer.initProx)) {
+                    LedSubsystem.setYellowMsg();
                     counter = 2;
                 }
                 break;

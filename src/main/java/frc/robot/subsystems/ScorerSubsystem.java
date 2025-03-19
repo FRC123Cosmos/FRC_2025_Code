@@ -180,7 +180,6 @@ public class ScorerSubsystem extends SubsystemBase{
     public void ejectElevated(){
         scorerRightController.setReference(0.25, ControlType.kDutyCycle);
         scorerLeftController.setReference(0.25, ControlType.kDutyCycle);
-
     }
 
     @Override

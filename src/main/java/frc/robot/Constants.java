@@ -93,7 +93,7 @@ public final class Constants {
     public static final class AutoConstants {
 
             public static final RobotConfig ROBOT_CONFIG = new RobotConfig(
-                70.088,         // Mass from "robotMass"
+                70.0,         // Mass from "robotMass"
                 6.883, // MOI from "robotMOI"
                 new ModuleConfig(
                 ModuleConstants.kWheelRadiusMeters,              // Motor type from "driveMotorType"
@@ -104,10 +104,10 @@ public final class Constants {
                 4                  // Coefficient of friction from "wheelCOF"
                 ),                       // Module config
                 new Translation2d[] {
-                    new Translation2d(0.279, 0.279),  // FL
-                    new Translation2d(0.279, -0.279), // FR
-                    new Translation2d(-0.279, 0.279), // BL
-                    new Translation2d(-0.279, -0.279) // BR
+                    new Translation2d(0.368, 0.368),  // FL
+                    new Translation2d(0.368, -0.368), // FR
+                    new Translation2d(-0.368, 0.368), // BL
+                    new Translation2d(-0.368, -0.368) // BR
                 }                       // Module offsets
             );
 
@@ -250,18 +250,13 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
-        public static final double cameraXOffsetB = 9; // x (forward), y (left/right)
-        public static final double cameraYOffsetB = 10.5;
-        public static final double cameraHeightB = 8.5; // z (height) in meters
-        public static final double cameraYawOffsetB = 0 ;
-        public static final double cameraPitchB = 0; // Pitch angle in degrees
+        public static final double cameraXOffset = .127; // x (forward), y (left/right)
+        public static final double cameraYOffset = 0;
+        public static final double cameraHeight = .22; // z (height) in meters
+        public static final double cameraYawOffset = 0 ;
+        public static final double cameraPitch = 0; // Pitch angle in degrees
 
-        public static final double cameraXOffsetG = 0; // x (forward), y (left/right)
-        public static final double cameraYOffsetG = 0;
-        public static final double cameraHeightG = 0; // z (height) in meters
-        public static final double cameraYawOffsetG = 0 ;
-        public static final double cameraPitchG = 0; // Pitch angle in degrees
-
+        
         public static final double leftAlignRangeLeftInterval = -9;
         public static final double leftAlignRangeRightInterval = -11;
     }

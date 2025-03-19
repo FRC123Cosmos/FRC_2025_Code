@@ -24,6 +24,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final SparkMax followElevatorMax;
     private final RelativeEncoder leadElevatorEncoder;
 
+    // private VisionSubsystem visionSubsystem;
+
     // private final XboxController controller = new XboxController(OIConstants.kCoPilotControllerPort);
 
     private final ProfiledPIDController leadElevatorProfiledPIDController;
@@ -133,6 +135,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         // else {
         //     setElevator(controller.getLeftY()*(-1));
         // }
+
+        // SmartDashboard.putNumber("Target_Y", visionSubsystem.target_y);
             if (!atHeight()) {
                 // leadElevatorProfiledPIDController.setGoal(targetPosition);
                 // leadElevatorMax.setVoltage(
