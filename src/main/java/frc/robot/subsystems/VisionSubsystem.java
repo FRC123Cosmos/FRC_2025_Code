@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 
 public class VisionSubsystem extends SubsystemBase {
-    private final PhotonCamera camera = new PhotonCamera("GSC_BLACK");
-    private PhotonPipelineResult latestResult = new PhotonPipelineResult();
+    private final PhotonCamera camera;
+    private PhotonPipelineResult latestResult;
 
     private final String cameraName = "GSC_BLACK";
 
@@ -36,6 +36,8 @@ public class VisionSubsystem extends SubsystemBase {
     public VisionSubsystem() {
         CommandScheduler.getInstance().registerSubsystem(this);
         
+        camera = new PhotonCamera(cameraName);
+        latestResult = new PhotonPipelineResult();
         cameraOffset = new Translation2d(VisionConstants.cameraXOffset, VisionConstants.cameraYOffset);
         cameraYawOffset = Rotation2d.fromDegrees(VisionConstants.cameraYawOffset);
         cameraHeight = VisionConstants.cameraHeight;
@@ -74,11 +76,11 @@ public class VisionSubsystem extends SubsystemBase {
 
         // SmartDashboard.putNumber("camera Yaw", rawYawB);
 
-        SmartDashboard.putBoolean("isLeftAligned", isLeftAlignB());
+        SmartDashboard.putBoolean("isLeftAligned", isLeftAlign());
     }
 
 
-    public boolean hasTargetB() {
+    public boolean hasTarget() {
         return latestResult.hasTargets();      // mpk - should be periodic result via public gettter/setter interface?
     }
 
@@ -87,8 +89,8 @@ public class VisionSubsystem extends SubsystemBase {
      * @param robotHeading Current robot heading (Rotation2d)
      * @return Yaw in degrees relative to robot frame
      */
-    public double getTargetYawAdjustedB(Rotation2d robotHeading) {
-        if (hasTargetB()) {
+    public double getTargetYawAdjusted(Rotation2d robotHeading) {
+        if (hasTarget()) {
             double rawYaw = latestResult.getBestTarget().getYaw();
             // Adjust yaw for camera's orientation and position
             Rotation2d adjustedYawB = Rotation2d.fromDegrees(rawYaw).plus(cameraYawOffset).minus(robotHeading);
@@ -97,8 +99,8 @@ public class VisionSubsystem extends SubsystemBase {
         return 0.0;
     }
 
-    public boolean isLeftAlignB(){
-        if (hasTargetB()) {
+    public boolean isLeftAlign(){
+        if (hasTarget()) {
             return (rawYaw > VisionConstants.leftAlignRangeLeftInterval) && (rawYaw < VisionConstants.leftAlignRangeRightInterval);
         }
         else{
@@ -106,15 +108,15 @@ public class VisionSubsystem extends SubsystemBase {
         }
     }
 
-    public double getTargetPitchB() {
-        if (hasTargetB()) {
+    public double getTargetPitch() {
+        if (hasTarget()) {
             return latestResult.getBestTarget().getPitch();
         }
         return 0.0;
     }
 
-    public double getTargetAreaB() {
-        if (hasTargetB()) {
+    public double getTargetArea() {
+        if (hasTarget()) {
             return latestResult.getBestTarget().getArea();
         }
         return 0.0;
@@ -125,17 +127,17 @@ public class VisionSubsystem extends SubsystemBase {
      * @param targetHeight Height of target from ground (meters)
      * @return Distance in meters, -1 if no target
      */
-    public double getDistanceToTargetB(double targetHeight) {
-        if (hasTargetB()) {
-            double pitch = getTargetPitchB();
+    public double getDistanceToTarget(double targetHeight) {
+        if (hasTarget()) {
+            double pitch = getTargetPitch();
             double totalPitch = Math.toRadians(cameraPitch + pitch);
             return (targetHeight - cameraHeight) / Math.tan(totalPitch);
         }
         return -1.0;
     }
 
-    public PhotonTrackedTarget getBestTargetB() {
-        if (hasTargetB()) {
+    public PhotonTrackedTarget getBestTarget() {
+        if (hasTarget()) {
             return latestResult.getBestTarget();
         }
         return null;
