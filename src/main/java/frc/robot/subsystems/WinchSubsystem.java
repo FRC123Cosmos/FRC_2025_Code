@@ -7,6 +7,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -52,7 +53,15 @@ public class WinchSubsystem extends SubsystemBase{
         }
 
         SmartDashboard.putNumber("Winch Pos", getPosition());
+
+        // SendableChooser<Boolean> isRetractable = new SendableChooser<Boolean>();
+        // isRetractable.addOption("true", Boolean.TRUE);
+        // isRetractable.addOption("false", Boolean.FALSE);
+        // isRetractable.setDefaultOption("false", Boolean.FALSE);
+        // SmartDashboard.putData("isRetractable", isRetractable);
+        // WinchConfigs.retractable = isRetractable.getSelected();
     }
+
 // 224
     public void openTrap(){
         trapMax.set(WinchConstants.trapOpenSpeed);

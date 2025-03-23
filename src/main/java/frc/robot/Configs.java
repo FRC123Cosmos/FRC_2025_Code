@@ -5,6 +5,8 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -192,6 +194,8 @@ public final class Configs {
         public static final SparkMaxConfig winchMaxConfig = new SparkMaxConfig();
         public static final SparkMaxConfig trapMaxConfig = new SparkMaxConfig();
 
+        public static boolean retractable;
+        
         static{
                 winchMaxConfig
                         .idleMode(IdleMode.kBrake)
@@ -200,9 +204,9 @@ public final class Configs {
                         .voltageCompensation(12);
                 winchMaxConfig.softLimit
                         .forwardSoftLimit(WinchConstants.kTopPosition)
-                        .forwardSoftLimitEnabled(true);
-                        // .reverseSoftLimit(0)
-                        // .reverseSoftLimitEnabled(true);
+                        .forwardSoftLimitEnabled(true)
+                        .reverseSoftLimit(0)
+                        .reverseSoftLimitEnabled(true);
                 winchMaxConfig.closedLoop
                         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                         .pid(0.05, 2e-5, 0.0)

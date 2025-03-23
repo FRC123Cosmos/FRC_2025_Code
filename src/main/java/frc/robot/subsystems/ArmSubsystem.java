@@ -126,5 +126,4 @@ public class ArmSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Arm Position", getArmPosition());
         SmartDashboard.putBoolean("Arm at Position", atPosition());
     }
-
 }

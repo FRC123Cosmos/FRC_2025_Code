@@ -239,7 +239,7 @@ public final class Constants {
         public static final int kTrapCANID = 12;
         public static final int kWinchCANID = 11;
 
-        public static final double kTopPosition = 210;
+        public static final double kTopPosition = 145;
         public static final double kIdlePosition = -90; 
 
         public static final double kIdleSpeed = -0.25;
@@ -253,7 +253,7 @@ public final class Constants {
         public static final double cameraXOffset = .127; // x (forward), y (left/right)
         public static final double cameraYOffset = 0;
         public static final double cameraHeight = .22; // z (height) in meters
-        public static final double cameraYawOffset = 0 ;
+        public static final double cameraYawOffset = 0;
         public static final double cameraPitch = 0; // Pitch angle in degrees
 
         

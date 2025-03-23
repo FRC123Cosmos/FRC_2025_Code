@@ -8,6 +8,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 // import edu.wpi.first.math.controller.PIDController;
 // import edu.wpi.first.math.controller.ProfiledPIDController;
 // import edu.wpi.first.math.geometry.Pose2d;
@@ -40,6 +42,7 @@ import frc.robot.Constants.ArmConstants;
 // import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.AlignToTagCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.PulseScorerCommand;
@@ -83,6 +86,9 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   private final SendableChooser<AutoPos> autoPosition;
+
+  private final Pose2d leftAlign = new Pose2d(-0.17, 0.0, Rotation2d.fromDegrees(0));
+  private final Pose2d rightAlign = new Pose2d(0.17, 0.0, Rotation2d.fromDegrees(0));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -156,7 +162,7 @@ public class RobotContainer {
 
     new EventTrigger("elevatorUpL2Algae+armDown").onTrue(
       new ParallelCommandGroup(new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L2Algae), elevator), 
-      new InstantCommand(() -> arm.setArmPosition(ArmConstants.kStowPosition)).andThen(new InstantCommand(() -> arm.setArmRoller(-.4), arm))
+      new InstantCommand(() -> arm.setArmPosition(26)).andThen(new InstantCommand(() -> arm.setArmRoller(-.4), arm))
     ));
 
     new EventTrigger("elevatorUpL2Algae").onTrue(
@@ -175,9 +181,12 @@ public class RobotContainer {
     
     new EventTrigger("elevatorDownL1").onTrue(
       new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L1), elevator));
-
     
 
+
+    new EventTrigger("armDownOnly").onTrue(
+      new InstantCommand(() -> arm.setArmPosition(30)));
+      
     new EventTrigger("armDown").onTrue(
       new InstantCommand(() -> arm.setArmPosition(25), arm).andThen(() -> arm.setArmRoller(.3), arm));
 
@@ -197,7 +206,7 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Pos", autoPosition);
 
 
-    autoChooser = AutoBuilder.buildAutoChooser("Center");
+    autoChooser = AutoBuilder.buildAutoChooser("Center_1CV3");
     SmartDashboard.putData("Auto Mode", autoChooser);
   }
 
@@ -207,9 +216,12 @@ public class RobotContainer {
     robotDrive.setDefaultCommand(new DefaultDriveCommand(robotDrive));
     // led.setDefaultCommand(new LedCycleCommand(led, scorer));
 
+    // driverControllerCommand.a().whileTrue(new AlignToTagCommand(robotDrive, vision));
     // driverControllerCommand.a().whileTrue(new RunCommand(() -> robotDrive.setX()));
     driverControllerCommand.y().whileTrue(new RunCommand(() -> robotDrive.setX()));
     driverControllerCommand.start().onTrue(new InstantCommand(() -> robotDrive.zeroHeading(), robotDrive));
+    // driverControllerCommand.leftBumper().whileTrue(new AlignToTagCommand(robotDrive, vision, -0.17));
+    // driverControllerCommand.rightBumper().whileTrue(new AlignToTagCommand(robotDrive, vision, 0.17));
 
     coPilotSecondControllerCommand.button(9).whileTrue(new StartEndCommand(() -> winch.openTrap(), () -> winch.stopTrap()));
     coPilotSecondControllerCommand.button(10).whileTrue(new StartEndCommand(() -> winch.closeTrap(), () -> winch.stopTrap()));
@@ -233,7 +245,7 @@ public class RobotContainer {
     coPilotControllerCommand.y().whileTrue(new StartEndCommand(() -> arm.setArmRoller(0.3), () -> arm.setArmRoller(0)));
     coPilotControllerCommand.x().whileTrue(new StartEndCommand(() -> arm.setArmRoller(-0.40), () -> arm.setArmRoller(0)));
     coPilotControllerCommand.a().onTrue(new InstantCommand(() -> arm.setArmPosition(18), arm));
-    coPilotControllerCommand.start().onTrue(new InstantCommand(() -> arm.setArmPosition(180), arm));
+    coPilotControllerCommand.start().onTrue(new InstantCommand(() -> arm.setArmPosition(170), arm));
     coPilotControllerCommand.back().whileTrue(new StartEndCommand(() -> arm.setArmRoller(-0.40), () -> arm.setArmRoller(0)));
 
 

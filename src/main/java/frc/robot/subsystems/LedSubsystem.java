@@ -166,7 +166,11 @@ public class LedSubsystem extends SubsystemBase {
     // private static ElevatorSubsystem elevator = new ElevatorSubsystem();
             
             private static AddressableLED ledBar; // instance of the led bar class
-        
+
+            private static double allianceBlinkLastChangeTime = 0;
+            private static boolean allianceBlinkIsOn = true;
+            private static final double ALLIANCE_BLINK_INTERVAL = 0.25; // 250ms per phase (2 Hz full cycle)
+            private static final double ALLIANCE_BLINK_INTERVAL_SLOW = 1;
             // Buffer or the holder of the color's data and its variable
             private static AddressableLEDBuffer led_red_alliance;
             private static AddressableLEDBuffer led_blue_alliance;
@@ -175,6 +179,7 @@ public class LedSubsystem extends SubsystemBase {
             private static AddressableLEDBuffer led_green;
             private static AddressableLEDBuffer led_yellow;
             private static AddressableLEDBuffer led_orange;
+            private static AddressableLEDBuffer led_purple;
             // private static AddressableLEDBuffer led_dynamic_msg;
             private static AddressableLEDBuffer rainbow_buffer;
             private static AddressableLEDBuffer elevator_progress_buffer;
@@ -193,7 +198,7 @@ public class LedSubsystem extends SubsystemBase {
         
             private static double policeLastChangeTime = 0;
             private static boolean policeIsFirstPhase = true;
-            private static final double POLICE_BLINK_INTERVAL = 0.15; // 150ms per phase (~6.67 Hz cycle)
+            private static final double POLICE_BLINK_INTERVAL = 0.05; // 150ms per phase (~6.67 Hz cycle)
             private static final int HALF_LENGTH = LEDConstants.ledLength / 2;
         
             // private static int dynamicCount = 0; // counter for dynamic messages
@@ -220,13 +225,14 @@ public class LedSubsystem extends SubsystemBase {
                 alliance_buffer = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
                 led_green = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
                 led_yellow = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
+                led_orange = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
                 autonomous_buffer = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
                 policeLed_buffer = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
                 blink_alliance_buffer = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
                 checkerBoard_buffer = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
                 counterChase_buffer = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
                 cosmic_buffer = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
-                led_orange = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
+                led_purple = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
                 // led_dynamic_msg = new AddressableLEDBuffer(LEDConstants.ledBufferLength); // specific blinking message
         
                 // initial message for led buffers
@@ -237,6 +243,7 @@ public class LedSubsystem extends SubsystemBase {
                     led_green.setLED(i, Color.kGreen);
                     led_yellow.setLED(i, Color.kYellow);
                     led_orange.setLED(i, Color.kOrange);
+                    led_purple.setLED(i, Color.kPurple);
         
                     // using bitwise-AND operators .... (alternating red-blue led)
                     if (((i & 3) == 0) // if the last two binary value of i & 3 is the same as 0's
@@ -278,13 +285,18 @@ public class LedSubsystem extends SubsystemBase {
                 ledBar.setData(led_green); // lights up green
             }
 
-            public static void setYellowMsg(){
+            public static void setPurpleMsg(){
                 // dynamicEffect = false;
-                ledBar.setData(led_yellow); // lights up green
+                ledBar.setData(led_purple); // lights up green
             }
 
             public static void setOrangeMsg(){
                 ledBar.setData(led_orange);
+            }
+
+            public static void setYellowMsg(){
+                // dynamicEffect = false;
+                ledBar.setData(led_yellow); // lights up green
             }
         
             public static void setAllianceColor(){ // sets allaince color in led
@@ -297,6 +309,48 @@ public class LedSubsystem extends SubsystemBase {
                 }
                 else {
                     allianceLED = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kRed, Color.kBlue);
+                }
+            }
+
+            public static void blinkAllianceSolid() {
+                double currentTime = Timer.getFPGATimestamp();
+        
+                // Switch phases if enough time has passed
+                if (currentTime - allianceBlinkLastChangeTime >= ALLIANCE_BLINK_INTERVAL) {
+                    allianceBlinkIsOn = !allianceBlinkIsOn;
+                    allianceBlinkLastChangeTime = currentTime;
+                    // Optional: Debug output
+                    System.out.println("Alliance blink phase: " + (allianceBlinkIsOn ? "ON" : "OFF") + " at time: " + currentTime);
+                }
+        
+                if (allianceBlinkIsOn) {
+                    // Set solid alliance color
+                    allianceLED.applyTo(alliance_buffer);
+                    ledBar.setData(alliance_buffer);
+                } else {
+                    // Turn off (black)
+                    ledBar.setData(led_blank);
+                }
+            }
+
+            public static void blinkAllianceSolidSlow() {
+                double currentTime = Timer.getFPGATimestamp();
+        
+                // Switch phases if enough time has passed
+                if (currentTime - allianceBlinkLastChangeTime >= ALLIANCE_BLINK_INTERVAL_SLOW) {
+                    allianceBlinkIsOn = !allianceBlinkIsOn;
+                    allianceBlinkLastChangeTime = currentTime;
+                    // Optional: Debug output
+                    System.out.println("Alliance blink phase: " + (allianceBlinkIsOn ? "ON" : "OFF") + " at time: " + currentTime);
+                }
+        
+                if (allianceBlinkIsOn) {
+                    // Set solid alliance color
+                    allianceLED.applyTo(alliance_buffer);
+                    ledBar.setData(alliance_buffer);
+                } else {
+                    // Turn off (black)
+                    ledBar.setData(led_blank);
                 }
             }
 
@@ -320,7 +374,7 @@ public class LedSubsystem extends SubsystemBase {
 
                 // Chase layer: Bright purple pulses moving across the strip
                 LEDPattern chaseLayer = LEDPattern.solid(Color.kBlue)
-                    .breathe(Second.of(1)) // Pulse every 1 second
+                    .breathe(Second.of(.5)) // Pulse every 1 second
                     .scrollAtRelativeSpeed(Percent.per(Second).of(50)) // Move at 50% speed
                     .atBrightness(Percent.of(80)); // Bright pulses
 
@@ -371,16 +425,16 @@ public class LedSubsystem extends SubsystemBase {
                     if (policeIsFirstPhase) {
                         // First phase: First half red, second half blue
                         if (i < HALF_LENGTH) {
-                            policeLed_buffer.setLED(i, Color.kBlue);
-                        } else {
                             policeLed_buffer.setLED(i, Color.kRed);
+                        } else {
+                            policeLed_buffer.setLED(i, Color.kBlue);
                         }
                     } else {
                         // Second phase: First half blue, second half red
                         if (i < HALF_LENGTH) {
-                            policeLed_buffer.setLED(i, Color.kRed);
-                        } else {
                             policeLed_buffer.setLED(i, Color.kBlue);
+                        } else {
+                            policeLed_buffer.setLED(i, Color.kRed);
                         }
                     }
                 }
