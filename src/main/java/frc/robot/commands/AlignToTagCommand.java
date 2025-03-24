@@ -269,13 +269,13 @@ public class AlignToTagCommand extends Command {
         yController.reset();
         targetError = 0.0;
         pidOut = 0.0;
-        targetSetpoint = 0.0;
+        targetSetpoint = 1;
         ySpeed = 0.0;
-        SmartDashboard.putNumber("targetSetpoint", targetSetpoint);
-        SmartDashboard.putNumber("target_y", targetY);
-        SmartDashboard.putNumber("targetError", targetError);
-        SmartDashboard.putNumber("pidOut", pidOut);
-        SmartDashboard.putNumber("ySpeed", ySpeed);
+        // SmartDashboard.putNumber("targetSetpoint", targetSetpoint);
+        // SmartDashboard.putNumber("target_y", targetY);
+        // SmartDashboard.putNumber("targetError", targetError);
+        // SmartDashboard.putNumber("pidOut", pidOut);
+        // SmartDashboard.putNumber("ySpeed", ySpeed);
     }
 
     @Override
@@ -289,7 +289,7 @@ public class AlignToTagCommand extends Command {
 
             ySpeed = Math.max(-0.25, Math.min(0.25, pidOut)); // Meters/sec
 
-            driveSubsystem.drive(0, ySpeed, 0, false, true);    // try kinematic rate limit??
+            driveSubsystem.drive(0, -ySpeed, 0, false, true);    // try kinematic rate limit??
 
         } else {
             pidOut = 0.0;
@@ -298,11 +298,11 @@ public class AlignToTagCommand extends Command {
             driveSubsystem.drive(0.0, 0.0, 0.0, false, false);
         }
         // mpk - comment out after verifing target values
-        SmartDashboard.putNumber("targetSetpoint", targetSetpoint);
-        SmartDashboard.putNumber("target_y", targetY);
-        SmartDashboard.putNumber("targetError", targetError);
-        SmartDashboard.putNumber("pidOut", pidOut);
-        SmartDashboard.putNumber("ySpeed", ySpeed);
+        // SmartDashboard.putNumber("targetSetpoint", targetSetpoint);
+        // SmartDashboard.putNumber("target_y", targetY);
+        // SmartDashboard.putNumber("targetError", targetError);
+        // SmartDashboard.putNumber("pidOut", pidOut);
+        // SmartDashboard.putNumber("ySpeed", ySpeed);
 
     }
 

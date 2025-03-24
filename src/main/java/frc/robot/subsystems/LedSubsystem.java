@@ -193,7 +193,7 @@ public class LedSubsystem extends SubsystemBase {
             private static AddressableLEDBuffer counterChase_buffer;
             private static AddressableLEDBuffer cosmic_buffer;
 
-            private static LEDPattern scrollBase = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kOrange, Color.kLime);
+            private static LEDPattern scrollBase = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kCyan, Color.kTeal);
             private static LEDPattern allianceLED;
         
             private static double policeLastChangeTime = 0;

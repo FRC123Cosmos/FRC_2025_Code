@@ -169,11 +169,11 @@ public class ScorerSubsystem extends SubsystemBase{
 
     public void ejectBottomRight(){
         scorerRightController.setReference(0.05, ControlType.kDutyCycle);
-        scorerLeftController.setReference(0.15, ControlType.kDutyCycle);
+        scorerLeftController.setReference(0.175, ControlType.kDutyCycle);
     }
 
     public void ejectBottomLeft(){
-        scorerRightController.setReference(0.15,ControlType.kDutyCycle);
+        scorerRightController.setReference(0.175,ControlType.kDutyCycle);
         scorerLeftController.setReference(0.05, ControlType.kDutyCycle);
     }
 
@@ -208,8 +208,8 @@ public class ScorerSubsystem extends SubsystemBase{
 
         // SmartDashboard.putNumber("left scorer output", scorerLeftMax.getAppliedOutput());
         // SmartDashboard.putNumber("right scorer output", scorerRightMax.getAppliedOutput());
-        SmartDashboard.putBoolean("init Prox State", initProx);
-        SmartDashboard.putBoolean("end Prox State", endProx);
+        // SmartDashboard.putBoolean("init Prox State", initProx);
+        // SmartDashboard.putBoolean("end Prox State", endProx);
         SmartDashboard.putBoolean("Not_Has_Cor", notHasCoral());
 
         // if (!hasCoral()) {

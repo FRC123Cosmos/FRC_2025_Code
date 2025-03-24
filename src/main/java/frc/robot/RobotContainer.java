@@ -54,7 +54,7 @@ import frc.robot.subsystems.LedSubsystem;
 // import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.ScorerSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
-import frc.robot.subsystems.WinchSubsystem;
+// import frc.robot.subsystems.WinchSubsystem;
 // import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 
@@ -68,7 +68,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveSubsystem robotDrive = new DriveSubsystem();
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-  private final WinchSubsystem winch = new WinchSubsystem();
+  // private final WinchSubsystem winch = new WinchSubsystem();
   private final ScorerSubsystem scorer = new ScorerSubsystem();
   private final ArmSubsystem arm = new ArmSubsystem();
   private final VisionSubsystem vision = new VisionSubsystem();
@@ -92,7 +92,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    CommandScheduler.getInstance().registerSubsystem(vision);
+    // CommandScheduler.getInstance().registerSubsystem(vision);
     /*---------------------------------------------Only For Center Auton----------------------------------------------- */
 
     new EventTrigger("elevatorUpL1").onTrue(
@@ -216,15 +216,15 @@ public class RobotContainer {
     robotDrive.setDefaultCommand(new DefaultDriveCommand(robotDrive));
     // led.setDefaultCommand(new LedCycleCommand(led, scorer));
 
-    // driverControllerCommand.a().whileTrue(new AlignToTagCommand(robotDrive, vision));
+    driverControllerCommand.a().whileTrue(new AlignToTagCommand(robotDrive, vision));
     // driverControllerCommand.a().whileTrue(new RunCommand(() -> robotDrive.setX()));
     driverControllerCommand.y().whileTrue(new RunCommand(() -> robotDrive.setX()));
     driverControllerCommand.start().onTrue(new InstantCommand(() -> robotDrive.zeroHeading(), robotDrive));
-    // driverControllerCommand.leftBumper().whileTrue(new AlignToTagCommand(robotDrive, vision, -0.17));
-    // driverControllerCommand.rightBumper().whileTrue(new AlignToTagCommand(robotDrive, vision, 0.17));
+    driverControllerCommand.leftBumper().whileTrue(new AlignToTagCommand(robotDrive, vision, -0.18));
+    driverControllerCommand.rightBumper().whileTrue(new AlignToTagCommand(robotDrive, vision, 0.195));
 
-    coPilotSecondControllerCommand.button(9).whileTrue(new StartEndCommand(() -> winch.openTrap(), () -> winch.stopTrap()));
-    coPilotSecondControllerCommand.button(10).whileTrue(new StartEndCommand(() -> winch.closeTrap(), () -> winch.stopTrap()));
+    // coPilotSecondControllerCommand.button(9).whileTrue(new StartEndCommand(() -> winch.openTrap(), () -> winch.stopTrap()));
+    // coPilotSecondControllerCommand.button(10).whileTrue(new StartEndCommand(() -> winch.closeTrap(), () -> winch.stopTrap()));
 
     // driverControllerCommand.a().whileTrue(robotDrive.sysIdQuasistatic(Direction.kForward));
     // driverControllerCommand.y().whileTrue(robotDrive.sysIdQuasistatic(Direction.kBackward)));
@@ -300,6 +300,10 @@ public class RobotContainer {
     new Trigger(elevator::atDangerHeight)
             .onTrue(new InstantCommand(() -> LedSubsystem.scrollMsg()))
             .onFalse(new InstantCommand(() -> LedSubsystem.setAllianceSolid()));
+
+    new Trigger(vision::hasTarget)
+      .onTrue(new InstantCommand(() -> LedSubsystem.setPurpleMsg()))
+      .onFalse(new InstantCommand(() -> LedSubsystem.setAllianceSolid()));
 
     coPilotControllerCommand.povUp().onTrue(new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L3), elevator));
     coPilotControllerCommand.povDown().onTrue(new InstantCommand(() -> elevator.setPosition(ElevatorConstants.kElevatorPosition_L0), elevator));
